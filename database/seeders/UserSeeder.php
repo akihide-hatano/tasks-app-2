@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
             'ドキュメント：READMEにセットアップ手順追加',
             'ふりかえり：1日の学びを5行で言語化',
         ];
-     // 既存ユーザー全員に、3〜8件ずつ付与
+        // 既存ユーザー全員に、3〜8件ずつ付与
         User::query()->chunkById(100, function ($users) use ($catalog) {
             foreach ($users as $user) {
                 Task::factory()
