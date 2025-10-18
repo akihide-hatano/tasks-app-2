@@ -48,5 +48,26 @@ class UserSeeder extends Seeder
             'ドキュメント：READMEにセットアップ手順追加',
             'ふりかえり：1日の学びを5行で言語化',
         ];
+     // 既存ユーザー全員に、3〜8件ずつ付与
+        User::query()->chunkById(100, function ($users) use ($catalog) {
+            foreach ($users as $user) {
+                Task::factory()
+                    ->for($user)
+                    ->count(random_int(3, 8))
+                    ->state(function () use ($catalog) {
+                        // 作成日時を直近60日でばらす／完了率は3割ほど
+                        $daysAgo   = random_int(0, 60);
+                        $timestamp = now()->subDays($daysAgo)->setTime(random_int(8, 23), random_int(0, 59));
+
+                        return [
+                            'title'      => Arr::random($catalog),
+                            'is_done'    => fake()->boolean(30), // 30% の確率で完了
+                            'created_at' => $timestamp,
+                            'updated_at' => $timestamp,
+                        ];
+                    })
+                    ->create();
+            }
+        });
     }
-}
+    }
