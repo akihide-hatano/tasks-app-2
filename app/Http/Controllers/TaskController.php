@@ -15,7 +15,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $user = Auth::usr() ?? abort(401);
+        $user = Auth::user() ?? abort(401);
         $tasks = Task::whereBelongsTo($user)->latest()->paginate(10);
 
         return view('tasks.index',compact('tasks'));
