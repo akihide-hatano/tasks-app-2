@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
@@ -12,7 +15,10 @@ class TaskController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::usr() ?? abort(401);
+        $tasks = Task::whereBelongsTo($user)->latest()->paginate(10);
+
+        return view('tasks.index',compact('tasks'));
     }
 
     /**
