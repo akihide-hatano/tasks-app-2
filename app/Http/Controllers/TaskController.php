@@ -12,8 +12,11 @@ class TaskController extends Controller
 {
     public function index()
     {
-        /** @var User $user */
-        $user = Auth::user() ?? abort(401);
+        /** @var User|null $user */
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
 
         $tasks = Task::whereBelongsTo($user)->latest()->paginate(10);
         return view('tasks.index', compact('tasks'));
@@ -48,18 +51,18 @@ class TaskController extends Controller
         }
 
 
-        $tasks = $user->tasks()->findOrFail($id);
-        return view('tasks.show',compact('tasks'));
+        $task = $user->tasks()->findOrFail($id);
+        return view('tasks.show',compact('task'));
     }
     public function edit(Task $task) {
         if($task->user_id !== Auth::id()){
             //権限がないので一覧に戻るように設定
             return redirect()
-                    ->route('show.index')
+                    ->route('tasks.index')
                     ->with('error', 'You are not allowed to edit that task.');
         }
 
-        return view('error','taskを編集する権限がありません');
+        return view('tasks.edit',compact('task'));
 
     }
     public function update(UpdateTaskRequest $request, Task $task) {
@@ -70,6 +73,10 @@ class TaskController extends Controller
         }
 
         $task->update($request->validated());
+
+        return redirect()
+                ->route('tasks.index')
+                ->with('status','taskを更新しました');
     }
 
     public function destroy(Task $task) {
