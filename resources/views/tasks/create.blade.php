@@ -9,5 +9,11 @@
                 {{session('status')}}
             </div>
         @endif
+
+        @if (session('error'))
+            <div class="mb-4 rounded bg-red-100 p-3 text-red-800">
+                {{ session('error') }}
+            </div>
+        @endif
     </div>
 </x-app-layout>
