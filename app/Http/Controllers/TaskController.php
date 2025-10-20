@@ -28,7 +28,11 @@ class TaskController extends Controller
     public function store(StoreTaskRequest $request) // ← FormRequest を受ける
     {
         /** @var User $user */
-        $user = Auth::user() ?? abort(401);
+        $user = Auth::user();
+
+        if(!$user){
+            return redirect()->route('login');
+        }
 
         $user->tasks()->create($request->validated());
         return redirect()
@@ -36,8 +40,50 @@ class TaskController extends Controller
             ->with('status', 'Task created.');
     }
 
-    public function show(Task $task) {}
-    public function edit(Task $task) {}
-    public function update(UpdateTaskRequest $request, Task $task) {}
-    public function destroy(Task $task) {}
+    public function show(string $id) {
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+
+        $tasks = $user->tasks()->findOrFail($id);
+        return view('tasks.show',compact('tasks'));
+    }
+    public function edit(Task $task) {
+        if($task->user_id !== Auth::id()){
+            //権限がないので一覧に戻るように設定
+            return redirect()
+                    ->route('show.index')
+                    ->with('error', 'You are not allowed to edit that task.');
+        }
+
+        return view('error','taskを編集する権限がありません');
+
+    }
+    public function update(UpdateTaskRequest $request, Task $task) {
+        if($task->user_id !== Auth::id()){
+            return back()
+                    ->withInput()
+                    ->with('error','taskを保存する権限がありません');
+        }
+
+        $task->update($request->validated());
+    }
+
+    public function destroy(Task $task) {
+        if($task->user_id !== Auth::id()){
+            return redirect()
+                    ->route('tasks.index')
+                    ->with('error','tasksを削除する権限がありません');
+        }
+
+        $task->delete();
+        return redirect()
+                ->route('tasks.index')
+                ->with('status','タスクが削除されました');
+
+    }
+
 }
