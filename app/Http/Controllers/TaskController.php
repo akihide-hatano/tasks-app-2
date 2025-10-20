@@ -26,7 +26,8 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        $tasks = Task::create();
+        return view('tasks.create', compact('task'));
     }
 
     /**
