@@ -172,7 +172,7 @@ class TaskControllerTest extends TestCase
     public function test_destroy_my_task():void
     {
         $me = User::factory()->create();
-        $task = Task::factory($me)->create();
+        $task = Task::factory()->for($me)->create();
 
         $this->actingAs($me)->delete("tasks/{$task->id}")
                 ->assertRedirect(route('tasks.index'))
@@ -187,8 +187,10 @@ class TaskControllerTest extends TestCase
         $other  = User::factory()->create();
         $others = Task::factory()->for($other)->create();
 
-        $this->actingAs($me)->delete("/tasks/{$others->id}")
-            ->assertStatus(403);
+        $this->actingAs($me)
+            ->delete(route('tasks.destroy', $others))
+            ->assertRedirect(route('tasks.index'))
+            ->assertSessionHas('error', 'tasksを削除する権限がありません');
 
         $this->assertDatabaseHas('tasks', ['id' => $others->id, 'user_id' => $other->id]);
         $this->assertDatabaseCount('tasks', 1);
