@@ -168,5 +168,29 @@ class TaskControllerTest extends TestCase
         $this->assertSame('keep', $task->fresh()->title);
     }
 
-    
+    //destory
+    public function test_destroy_my_task():void
+    {
+        $me = User::factory()->create();
+        $task = Task::factory($me)->create();
+
+        $this->actingAs($me)->delete("tasks/{$task->id}")
+                ->assertRedirect(route('tasks.index'))
+                ->assertSessionHas('status','タスクが削除されました');
+        
+        $this->assertDatabaseMissing('tasks',['id'=>$task->id]);
+    }
+
+    public function test_destroy_others_task_is_forbidden(): void
+    {
+        $me     = User::factory()->create();
+        $other  = User::factory()->create();
+        $others = Task::factory()->for($other)->create();
+
+        $this->actingAs($me)->delete("/tasks/{$others->id}")
+            ->assertStatus(403);
+
+        $this->assertDatabaseHas('tasks', ['id' => $others->id, 'user_id' => $other->id]);
+        $this->assertDatabaseCount('tasks', 1);
+    }
 }
