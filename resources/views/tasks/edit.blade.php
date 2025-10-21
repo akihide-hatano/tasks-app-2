@@ -15,7 +15,11 @@
     <div class="mb-4">
     <label class="block mb-1 font-medium">Title <span class="text-red-500">*</span></label>
     <input type="text" name="title" value="{{ old('title', $task->title) }}" class="w-full border rounded px-3 py-2" maxlength="100" required>
-    @error('title') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+    @error('title')
+        <div class="text-sm text-red-600 mt-1">
+            {{ $message }}
+        </div>
+    @enderror
     </div>
 
     <div class="mb-6">
@@ -24,7 +28,11 @@
         <input type="checkbox" name="is_done" value="1" @checked(old('is_done', (int)$task->is_done) == 1)>
         <span>Done</span>
     </label>
-    @error('is_done') <div class="text-sm text-red-600 mt-1">{{ $message }}</div> @enderror
+    @error('is_done')
+    <div class="text-sm text-red-600 mt-1">
+        {{ $message }}
+    </div>
+    @enderror
     </div>
 
     <div class="flex gap-2">
