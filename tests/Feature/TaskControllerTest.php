@@ -46,6 +46,28 @@ class TaskControllerTest extends TestCase
             ->assertOk()
             ->assertViewIs('tasks.index');
     }
+
+    /* ---------- store ---------- */
+    public function test_store_creates_task_and_normalizes_title():void
+    {
+        $me = User::factory()->create();
+
+        $res = $this->actingAs($me)->post('/tasks',[
+            'title' => 'テ ス ト'
+        ]);
+
+        $res->assertRedirect(route('tasks.index'))
+        ->assertSessionHas('status', 'Task created.');
+
+                // モデル側のタイトル正規化（半角スペ1個へ圧縮）を前提とした期待値
+        $this->assertDatabaseHas('tasks', [
+            'user_id' => $me->id,
+            'title'   => 'テ ス ト',
+            'is_done' => false,
+        ]);
+    }
+
+
     /**
      * A basic feature test example.
      */
