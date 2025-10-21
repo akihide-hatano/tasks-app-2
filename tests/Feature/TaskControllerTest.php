@@ -139,13 +139,13 @@ class TaskControllerTest extends TestCase
         ]);
 
         //is_doneだけ変更、titleは据え置き
-        $res = $this->actingAs($me)->patch("/tasks/{$task->di}",[
+        $res = $this->actingAs($me)->patch(route('tasks.update',$task),[
             'title' => $task->title,
             'is_done'=>true,
         ]);
 
         $res->assertRedirect(route('tasks.index'))
-            ->assertSessionHas('status','Task updated.');
+            ->assertSessionHas('status','taskを更新しました');
 
         $this->assertDatabaseHas('tasks',[
             'id' =>$task->id,
