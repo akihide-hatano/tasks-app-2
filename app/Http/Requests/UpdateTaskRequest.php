@@ -22,7 +22,7 @@ class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'=>['required','string','max:100'],
+            'title'=>['sometimes','string','max:100'],
             'is_done'=>['sometimes','boolean'],
         ];
     }
