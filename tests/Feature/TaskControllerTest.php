@@ -96,6 +96,21 @@ class TaskControllerTest extends TestCase
                     'title'   => $ok,
                     'is_done' => false,
                 ]);
+    }
+
+    public function test_store_without_is_done_defaults_false():void
+    {
+        $me = User::factory()->create();
+
+        $this->actingAs($me)->post('/tasks',
+                ['title'=>'x'])
+                ->assertRedirect(route('tasks.index'));
+
+        $this->assertDatabaseHas('tasks',[
+            'user_id' => $me->id,
+            'title'   => 'x',
+            'is_done' => false,
+        ]);
 
     }
 
