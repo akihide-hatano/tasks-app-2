@@ -24,13 +24,8 @@
                     Title <span class="text-red-500">*</span>
                 </label>
                 <input
-                    type="text"
-                    name="title"
-                    value="{{ old('title', $task->title) }}"
-                    class="w-full border rounded px-3 py-2"
-                    maxlength="100"
-                    required
-                >
+                    type="text" name="title" value="{{ old('title', $task->title) }}"
+                    class="w-full border rounded px-3 py-2" maxlength="100" required >
                 @error('title')
                     <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                 @enderror
