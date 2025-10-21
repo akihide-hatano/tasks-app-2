@@ -26,7 +26,7 @@
         </span>
     </div>
     <div class="flex gap-2">
-        <a href="{{ route('tasks.edit', $task) }}" class="px-3 py-1 border rounded">Edit</a>
+        <a href="{{ route('tasks.edit', $task) }}" class="px-3 py-1 border rounded bg-green-600 text-white">Edit</a>
         <form method="POST" action="{{ route('tasks.destroy', $task) }}">
         @csrf @method('DELETE')
         <button class="px-3 py-1 bg-red-600 text-white rounded" onclick="return confirm('Delete?')">Delete</button>
