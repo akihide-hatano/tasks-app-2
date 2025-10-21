@@ -22,7 +22,16 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' =>['sometimes','string','max;100'],
+            'is_done'=>['sometimes','boolean'],
+        ];
+    }
+
+    public function attributes():array
+    {
+        return[
+            'title'=>'タイトル',
+            'is_done'=>'完了フラグ'
         ];
     }
 }
