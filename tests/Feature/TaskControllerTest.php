@@ -114,6 +114,46 @@ class TaskControllerTest extends TestCase
 
     }
 
+    /* show*/
+    public function test_show_my_task_is_ok_but_ohter_is_forbidden():void
+    {
+        $me = User::factory()->create();
+        $other = User::factory()->create();
+
+        $mine = Task::factory()->for($me)->create();
+        $others = Task::factory()->for($other)->create();
+
+        // コントローラ実装は403リダイレクト/ステータス扱いのどちらか
+        $this->actingAs($me)->get("/tasks/{$others->id}")
+                ->assertStatus(404);
+    }
+
+    //update
+
+    public function test_update_patch_only_set_fieles():void
+    {
+        $me = User::factory()->create();
+        $task = Task::factory()->for($me)->create([
+            'title' => 'old',
+            'is_done'=>false,
+        ]);
+
+        //is_doneだけ変更、titleは据え置き
+        $res = $this->actingAs($me)->patch("/tasks/{$task->di}",[
+            'title' => $task->title,
+            'is_done'=>true,
+        ]);
+
+        $res->assertRedirect(route('tasks.index'))
+            ->assertSessionHas('status','Task updated.');
+
+        $this->assertDatabaseHas('tasks',[
+            'id' =>$task->id,
+            'title'=>'old',
+            'is_done'=>true,
+        ]);
+    }
+
     /**
      * A basic feature test example.
      */
