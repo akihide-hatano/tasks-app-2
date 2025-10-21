@@ -154,13 +154,19 @@ class TaskControllerTest extends TestCase
         ]);
     }
 
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
+    public function test_update_validation_error_redirects_back_with_errors(): void
     {
-        $response = $this->get('/');
+        $me = User::factory()->create();
+        $task = Task::factory()->for($me)->create(['title'=>'keep']);
 
-        $response->assertStatus(200);
+        $this->actingAs($me)
+            ->from("/tasks/{$task->id}/edit")
+            ->patch("/tasks/{$task->id}",['title'=>''])
+            ->assertRedirect("/tasks/{$task->id}/edit")
+            ->assertSessionHasErrors(['title']);
+
+        $this->assertSame('keep', $task->fresh()->title);
     }
+
+    
 }
