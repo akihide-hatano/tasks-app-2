@@ -36,6 +36,16 @@ class TaskControllerTest extends TestCase
             ->assertSee('mine')
             ->assertDontSee('others'); // 他人のタスクは表示されない
     }
+
+    public function test_index_pagenates():void
+    {
+        $me = User::factory()->create();
+        Task::factory()->for($me)->count(15)->create();
+
+        $this->actingAs($me)->get('/tasks?page=1')
+            ->assertOk()
+            ->assertViewIs('tasks.index');
+    }
     /**
      * A basic feature test example.
      */
