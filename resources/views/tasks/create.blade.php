@@ -36,10 +36,7 @@
                 {{-- 未チェックでも値が送られるよう hidden を入れておく --}}
                 <input type="hidden" name="is_done" value="0">
                 <label class="inline-flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        name="is_done"
-                        value="1"
+                    <input type="checkbox" name="is_done" value="1"
                         @checked(old('is_done', (int)$task->is_done) == 1)
                     >
                     <span>Done</span>
