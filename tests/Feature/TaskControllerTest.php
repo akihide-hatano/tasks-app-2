@@ -177,7 +177,6 @@ class TaskControllerTest extends TestCase
         $this->actingAs($me)->delete("tasks/{$task->id}")
                 ->assertRedirect(route('tasks.index'))
                 ->assertSessionHas('status','タスクが削除されました');
-        
         $this->assertDatabaseMissing('tasks',['id'=>$task->id]);
     }
 
