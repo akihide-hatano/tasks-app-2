@@ -19,8 +19,10 @@ Route::middleware('auth')->group(function () {
 });
 
 // TaskのCRUD（リソースルート）
-Route::resource('tasks', TaskController::class)
-        ->parameters(['tasks' => 'task'])   // {task} でモデルバインド
-        ->names('tasks');                   // tasks.index / tasks.store ... の名前付け
+Route::middleware('auth')->group(function(){
+    Route::resource('tasks', TaskController::class)
+            ->parameters(['tasks' => 'task'])   // {task} でモデルバインド
+            ->names('tasks');                   // tasks.index / tasks.store ... の名前付け
+});
 
 require __DIR__.'/auth.php';
