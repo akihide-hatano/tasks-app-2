@@ -51,7 +51,6 @@ class TaskControllerTest extends TestCase
     public function test_store_creates_task_and_normalizes_title():void
     {
         $me = User::factory()->create();
-
         $res = $this->actingAs($me)->post('/tasks',[
             'title' => 'テ ス ト'
         ]);
@@ -59,7 +58,7 @@ class TaskControllerTest extends TestCase
         $res->assertRedirect(route('tasks.index'))
         ->assertSessionHas('status', 'Task created.');
 
-                // モデル側のタイトル正規化（半角スペ1個へ圧縮）を前提とした期待値
+        // モデル側のタイトル正規化（半角スペ1個へ圧縮）を前提とした期待値
         $this->assertDatabaseHas('tasks', [
             'user_id' => $me->id,
             'title'   => 'テ ス ト',
@@ -67,6 +66,16 @@ class TaskControllerTest extends TestCase
         ]);
     }
 
+    public function test_store_validation_title_required_and_max(): void
+    {
+        $me = User::factory()->create();
+
+        //titleなし
+        $this->actingAs($me)->from('/tasks/create')
+                ->post('/tasks',[])
+                ->assertRedirect('/tasks/create')
+                ->assertSessionHasErrors(['title']);
+    }
 
     /**
      * A basic feature test example.
